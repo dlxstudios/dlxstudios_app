@@ -20,16 +20,38 @@
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="dlxstudios_app">
+  <meta name="apple-mobile-web-app-title" content="app">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
-  <title>dlxstudios.com</title>
+  <title>app</title>
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
+
+       <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+       <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+       <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-storage.js"></script>
+       <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+       <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-analytics.js"></script>
+     
+       <script>
+         var firebaseConfig = {
+           apiKey: "AIzaSyCnYzzqZdHbbWol5JRUnW3SUt0rI8MzAr0",
+           authDomain: "dlxstudios-f6e64.firebaseapp.com",
+           databaseURL: "https://dlxstudios-f6e64.firebaseio.com",
+           projectId: "dlxstudios-f6e64",
+           storageBucket: "dlxstudios-f6e64.appspot.com",
+           messagingSenderId: "633139741304",
+           appId: "1:633139741304:web:7bc94a4b1c033c6a7f238d",
+           measurementId: "G-2K6CEBNJSW"
+         };
+         // Initialize Firebase
+         firebase.initializeApp(firebaseConfig);
+         firebase.analytics();
+       </script>
   <script>
     var serviceWorkerVersion = null;
     var scriptLoaded = false;
