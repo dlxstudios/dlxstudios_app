@@ -1,7 +1,4 @@
-import 'package:dlxstudios_app/app/state.dart';
 import 'package:flavor_client/client/flavor_router.dart';
-import 'package:flavor_client/client/flavor_state.dart';
-
 import 'package:flavor_client/components/grid.dart';
 import 'package:flavor_client/components/page.dart';
 import 'package:flavor_client/components/tiles.dart';
@@ -15,32 +12,13 @@ import 'package:like_button/like_button.dart';
 ///
 /// !!! Todo : Combine inbox and groups
 /// !!! Todo : replace groups with feature request
-class DLXInboxPage extends StatelessWidget {
-  const DLXInboxPage({
+class ScreenInbox extends StatelessWidget {
+  const ScreenInbox({
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // return Scaffold(
-    //   body: Padding(
-    //     padding: const EdgeInsets.all(24.0),
-    //     child: Column(
-    //       mainAxisAlignment: MainAxisAlignment.center,
-    //       crossAxisAlignment: CrossAxisAlignment.start,
-    //       children: [
-    //         FlavorText.headline6(
-    //             context, 'You have to be signed in to use this feature'),
-    //         ElevatedButton.icon(
-    //           onPressed: () {},
-    //           icon: Icon(Icons.person),
-    //           label: Text('Sign in'),
-    //         )
-    //       ],
-    //     ),
-    //   ),
-    // );
-
     return PageShell(
       statusbarColor: Colors.transparent,
       child: DefaultTabController(
@@ -314,7 +292,7 @@ class DLXPageHomeWorking extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, watch, child) {
-        final FlavorClientState app = watch(dlxAppStateGlobal);
+        // final FlavorClientState app = watch(dlxAppStateGlobal);
         return PageShell(
           // safeArea: true,
           child: Scaffold(

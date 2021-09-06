@@ -1,4 +1,7 @@
-import 'package:dlxstudios_app/dash/dash_home.dart';
+import 'package:dlxstudios_app/components/layout.dart';
+import 'package:dlxstudios_app/screens/home.dart';
+import 'package:dlxstudios_app/screens/inbox.dart';
+import 'package:dlxstudios_app/screens/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flavor_auth/flavor_auth.dart';
 import 'package:flavor_client/repository/firestore.dart';
@@ -50,13 +53,17 @@ class DashAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  final router = RegexRouter.create({
-    "/": (context, _) => DashHome(),
-    // "/menu/category/:catId/item/:itemId/": (context, args) =>
-    //     PageMenuItem(id: args["itemId"]!),
-    // "/menu/category/:catId": (context, args) =>
-    //     PageCategory(id: args["catId"]!),
-  });
+  get router {
+    Map<String, Widget Function(BuildContext, RouteArgs)> map = {};
+    for (var i = 0; i < dashRoutes.length; i++) {
+      map.putIfAbsent(
+        dashRoutes[i].path,
+        () => (context, args) => ScreenHome(args: args),
+      );
+    }
+
+    return RegexRouter.create(map);
+  }
 
   void updateAndSave() {
     appBox!.put('_user', user != null ? user!.toJson() : null);
@@ -103,23 +110,39 @@ final List<FlavorRouteWidget> dashRoutes = [
     path: '/',
     icon: CupertinoIcons.home,
     title: 'Home',
-    child: DashHome(),
+    child: ScreenHome(),
     backgroundColor: Colors.green,
     routeInDrawer: true,
   ),
   FlavorRouteWidget(
-    path: '/music',
+    path: '/:viewID',
     icon: CupertinoIcons.home,
+    title: 'Home',
+    child: DashAppLayoutWidget(),
+    backgroundColor: Colors.green,
+    routeInDrawer: false,
+  ),
+  FlavorRouteWidget(
+    path: '/media/music',
+    icon: CupertinoIcons.music_note,
     title: 'Music',
-    child: DashHome(),
+    child: ScreenHome(),
     backgroundColor: Colors.green,
     routeInDrawer: true,
   ),
   FlavorRouteWidget(
-    path: '/videos',
-    icon: CupertinoIcons.home,
-    title: 'Videos',
-    child: DashHome(),
+    path: '/p/messages',
+    icon: CupertinoIcons.mail,
+    title: 'Messages',
+    child: ScreenInbox(),
+    backgroundColor: Colors.green,
+    routeInDrawer: true,
+  ),
+  FlavorRouteWidget(
+    path: '/p/settings',
+    icon: CupertinoIcons.settings,
+    title: 'Settings',
+    child: ScreenSettings(),
     backgroundColor: Colors.green,
     routeInDrawer: true,
   ),

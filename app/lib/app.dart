@@ -1,25 +1,39 @@
 import 'package:animations/animations.dart';
 import 'package:audio_service/audio_service.dart';
-import 'package:dlxstudios_app/components/pageviewer.dart';
-import 'package:dlxstudios_app/dash/layout.dart';
-import 'package:dlxstudios_app/dash/state.dart';
+import 'package:dlxstudios_app/components/pageview_item.dart';
+import 'package:dlxstudios_app/components/layout.dart';
+import 'package:dlxstudios_app/state/state.dart';
+import 'package:dlxstudios_app/theme/theme.dart';
 import 'package:flavor_client/client/flavor_state.dart';
+import 'package:flavor_client/components/page.dart';
 import 'package:flavor_client/components/route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
 
-class DashV1 extends StatelessWidget {
-  const DashV1({Key? key}) : super(key: key);
+class DLXApp extends StatelessWidget {
+  final DashAppState app;
+  const DLXApp({
+    Key? key,
+    required this.app,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var app = context.watch<DashAppState>();
     return MaterialApp(
-      themeMode: ThemeMode.dark,
-      darkTheme: ThemeData.dark(),
+      themeMode: app.useDark ? ThemeMode.dark : ThemeMode.light,
+      darkTheme: darkTheme(mcgpalette0, textTheme),
+      theme: lightTheme(mcgpalette0, textTheme),
       debugShowCheckedModeBanner: false,
+      onUnknownRoute: (settings) {
+        return MaterialPageRoute(
+          builder: (context) => PageError(
+            errorCode: 404.toString(),
+            msg: 'Unable to find "${settings.name}"',
+          ),
+        );
+      },
+      onGenerateRoute: app.router.generateRoute,
       home: AudioServiceWidget(
         child: DashAppLayoutWidget(),
       ),
