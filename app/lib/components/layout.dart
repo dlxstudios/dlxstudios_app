@@ -11,7 +11,10 @@ import 'package:miniplayer/miniplayer.dart';
 
 class DashAppLayoutWidget extends StatefulWidget {
   final String? viewId;
-  const DashAppLayoutWidget({
+
+  final DashAppState app;
+  const DashAppLayoutWidget(
+    this.app, {
     Key? key,
     this.viewId,
   }) : super(key: key);
@@ -32,7 +35,7 @@ class _AppLayoutWidgetState extends State<DashAppLayoutWidget>
   void initState() {
     super.initState();
     _tabController = new TabController(
-      length: routesForDrawer.length,
+      length: widget.app.routesForDrawer.length,
       vsync: this,
       initialIndex: _selectedIndex,
     );
@@ -46,19 +49,23 @@ class _AppLayoutWidgetState extends State<DashAppLayoutWidget>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).backgroundColor,
-      child: FlavorResponsiveView(
-        global: true,
-        breakpoints: {
-          DisplayType.s: buildSmallView(),
-          DisplayType.l: buildLargeView(),
-        },
-      ),
-    );
+    return Consumer(builder: (context, watch, _) {
+      final miniPlayerController = watch(miniPlayerControllerProvider).state;
+
+      return Container(
+        color: Theme.of(context).backgroundColor,
+        child: FlavorResponsiveView(
+          global: true,
+          breakpoints: {
+            DisplayType.s: buildSmallView(miniPlayerController),
+            DisplayType.l: buildLargeView(miniPlayerController),
+          },
+        ),
+      );
+    });
   }
 
-  Widget buildSmallView() {
+  Widget buildSmallView(MiniplayerController miniPlayerController) {
     return Scaffold(
       key: GlobalScaffoldKey,
       // appBar: buildMobileAppBar(context),
@@ -82,34 +89,10 @@ class _AppLayoutWidgetState extends State<DashAppLayoutWidget>
   }
 
   Widget buildBody() {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Positioned.fill(
-          bottom: 68,
-          child: Container(
-            child: buildTabViewBody(),
-          ),
-        ),
-        Positioned.fill(
-          child: Consumer(builder: (context, watch, _) {
-            final miniPlayerController =
-                watch(miniPlayerControllerProvider).state;
-            return Miniplayer(
-              controller: miniPlayerController,
-              minHeight: 80,
-              maxHeight: MediaQuery.of(context).size.height,
-              builder: (height, percentage) {
-                return buildPlayer(height: height, percentage: percentage);
-              },
-            );
-          }),
-        )
-      ],
-    );
+    return buildTabViewBody();
   }
 
-  Widget buildLargeView() {
+  Widget buildLargeView(MiniplayerController miniPlayerController) {
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -138,18 +121,14 @@ class _AppLayoutWidgetState extends State<DashAppLayoutWidget>
           ),
         ),
         Positioned.fill(
-          child: Consumer(builder: (context, watch, _) {
-            final miniPlayerController =
-                watch(miniPlayerControllerProvider).state;
-            return Miniplayer(
-              controller: miniPlayerController,
-              minHeight: 100,
-              maxHeight: MediaQuery.of(context).size.height,
-              builder: (height, percentage) {
-                return buildPlayer(height: height, percentage: percentage);
-              },
-            );
-          }),
+          child: Miniplayer(
+            controller: miniPlayerController,
+            minHeight: 100,
+            maxHeight: MediaQuery.of(context).size.height,
+            builder: (height, percentage) {
+              return buildPlayer(height: height, percentage: percentage);
+            },
+          ),
         )
       ],
     );
@@ -266,13 +245,10 @@ class _AppLayoutWidgetState extends State<DashAppLayoutWidget>
             child: AspectRatio(
               aspectRatio: 16 / 9,
               child: Material(
-                // color: Colors.green,
+                color: Colors.black87,
                 child: Container(
                   padding: EdgeInsets.all(0),
-                  child: Material(
-                    elevation: 1,
-                    child: Center(child: Text('Video Goes Here')),
-                  ),
+                  child: Center(child: Text('Video Goes Here')),
                 ),
               ),
             ),
@@ -314,7 +290,7 @@ class _AppLayoutWidgetState extends State<DashAppLayoutWidget>
             _selectedIndex = value;
           });
         },
-        tabs: routesForDrawer
+        tabs: widget.app.routesForDrawer
             .map(
               (e) => Tab(
                 icon: Icon(
@@ -330,8 +306,9 @@ class _AppLayoutWidgetState extends State<DashAppLayoutWidget>
   TabBarView buildTabViewBody() {
     return TabBarView(
       controller: _tabController,
-      children:
-          routesForDrawer.map((e) => PageViewItem(child: e.child)).toList(),
+      children: widget.app.routesForDrawer
+          .map((e) => PageViewItem(child: e.child))
+          .toList(),
     );
   }
 
@@ -367,14 +344,14 @@ class _AppLayoutWidgetState extends State<DashAppLayoutWidget>
       color: Theme.of(context).backgroundColor,
       child: AnimatedContainer(
         padding: EdgeInsets.only(
-          left: percentage > 0.01 ? 0 : 8,
-          right: percentage > 0.01 ? 0 : 8,
-          bottom: percentage > 0.01 ? 0 : 8,
+          left: percentage > 0.02 ? 0 : 8,
+          right: percentage > 0.02 ? 0 : 8,
+          bottom: percentage > 0.02 ? 0 : 8,
         ),
-        duration: Duration(milliseconds: 200),
+        duration: Duration(milliseconds: 150),
         child: Material(
-          elevation: 5,
-          child: height <= 60 + 50.0
+          elevation: 10,
+          child: height <= 100 + 50.0
               ? buildMiniPlayerMin(percentage)
               : buildMiniPlayerMax(percentage),
         ),

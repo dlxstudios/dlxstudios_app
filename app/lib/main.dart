@@ -22,11 +22,11 @@ Future<void> main() async {
   //     child: DLXApp(),
   //   ),
   // );
-  var appBox = await Hive.openBox('dlxstudios_app');
+  // var appBox = await Hive.openBox('dlxstudios_app');
 
   await runClient(ProviderScope(
     child: Provider.ChangeNotifierProvider<DashAppState>(
-      create: (context) => DashAppState(appBox),
+      create: (context) => DashAppState(),
       child: Provider.Consumer<DashAppState>(
         builder: (context, value, child) => DLXApp(app: value),
       ),

@@ -1,4 +1,7 @@
 import 'package:dlxstudios_app/components/layout.dart';
+import 'package:dlxstudios_app/providers/providers.dart';
+import 'package:dlxstudios_app/screens/account.dart';
+import 'package:dlxstudios_app/screens/admin.dart';
 import 'package:dlxstudios_app/screens/home.dart';
 import 'package:dlxstudios_app/screens/inbox.dart';
 import 'package:dlxstudios_app/screens/settings.dart';
@@ -19,9 +22,9 @@ final GlobalKey<NavigatorState> GlobalNavigatorKey =
 final GlobalKey<ScaffoldState> GlobalScaffoldKey = GlobalKey<ScaffoldState>();
 
 class DashAppState extends ChangeNotifier {
-  final Box? appBox;
+  final Future<Box<dynamic>> appBox = Hive.openBox('dlxstudios.app');
 
-  DashAppState(this.appBox) {
+  DashAppState() {
     if (appBox == null) {
       return;
     } else {
@@ -66,8 +69,9 @@ class DashAppState extends ChangeNotifier {
   }
 
   void updateAndSave() {
-    appBox!.put('_user', user != null ? user!.toJson() : null);
-    appBox!.put('_useDark', _useDark);
+    appBox.then(
+        (value) => value.put('_user', user != null ? user!.toJson() : null));
+    appBox.then((value) => value.put('_useDark', _useDark));
     notifyListeners();
   }
 
@@ -75,18 +79,18 @@ class DashAppState extends ChangeNotifier {
     // appBox!.delete('_cart');
 
     //
-    _useDark = appBox!.get('_useDark') ?? _useDark;
+    appBox.then((value) => value.get('_useDark') ?? _useDark);
     //
-    var __user = appBox!.get('_user');
-    print(__user);
-    _user = __user != null
-        ? FlavorUser(
-            displayName: __user['displayName'],
-            email: __user['email'],
-            emailVerified: __user['emailVerified'],
-            localId: __user['localId'],
-          )
-        : null;
+    var __user = appBox.then((value) => value.get('_user')).then((value) {
+      return _user = value != null
+          ? FlavorUser(
+              displayName: value['displayName'],
+              email: value['email'],
+              emailVerified: value['emailVerified'],
+              localId: value['localId'],
+            )
+          : null;
+    });
 
     //
   }
@@ -103,59 +107,67 @@ class DashAppState extends ChangeNotifier {
     updateAndSave();
     notifyListeners();
   }
-}
 
-final List<FlavorRouteWidget> dashRoutes = [
-  FlavorRouteWidget(
-    path: '/',
-    icon: CupertinoIcons.home,
-    title: 'Home',
-    child: ScreenHome(),
-    backgroundColor: Colors.green,
-    routeInDrawer: true,
-  ),
-  FlavorRouteWidget(
-    path: '/:viewID',
-    icon: CupertinoIcons.home,
-    title: 'Home',
-    child: DashAppLayoutWidget(),
-    backgroundColor: Colors.green,
-    routeInDrawer: false,
-  ),
-  FlavorRouteWidget(
-    path: '/media/music',
-    icon: CupertinoIcons.music_note,
-    title: 'Music',
-    child: ScreenHome(),
-    backgroundColor: Colors.green,
-    routeInDrawer: true,
-  ),
-  FlavorRouteWidget(
-    path: '/p/messages',
-    icon: CupertinoIcons.mail,
-    title: 'Messages',
-    child: ScreenInbox(),
-    backgroundColor: Colors.green,
-    routeInDrawer: true,
-  ),
-  FlavorRouteWidget(
-    path: '/p/settings',
-    icon: CupertinoIcons.settings,
-    title: 'Settings',
-    child: ScreenSettings(),
-    backgroundColor: Colors.green,
-    routeInDrawer: true,
-  ),
-];
+  List<FlavorRouteWidget> get dashRoutes => [
+        FlavorRouteWidget(
+          path: '/',
+          icon: CupertinoIcons.home,
+          title: 'Home',
+          child: ScreenHome(),
+          backgroundColor: Colors.green,
+          routeInDrawer: true,
+        ),
+        FlavorRouteWidget(
+          path: '/media/music',
+          icon: CupertinoIcons.music_note,
+          title: 'Music',
+          child: ScreenHome(),
+          backgroundColor: Colors.green,
+          routeInDrawer: true,
+        ),
+        FlavorRouteWidget(
+          path: '/p/messages',
+          icon: CupertinoIcons.mail,
+          title: 'Messages',
+          child: ScreenInbox(),
+          backgroundColor: Colors.green,
+          routeInDrawer: true,
+        ),
+        FlavorRouteWidget(
+          path: '/p/account',
+          icon: CupertinoIcons.person,
+          title: 'Account',
+          child: ScreenAccount(),
+          backgroundColor: Colors.green,
+          routeInDrawer: true,
+        ),
+        FlavorRouteWidget(
+          path: '/p/admin',
+          icon: CupertinoIcons.multiply,
+          title: 'Admin',
+          child: ScreenAdmin(),
+          backgroundColor: Colors.green,
+          routeInDrawer: false,
+        ),
+        FlavorRouteWidget(
+          path: '/p/settings',
+          icon: CupertinoIcons.settings,
+          title: 'Settings',
+          child: ScreenSettings(),
+          backgroundColor: Colors.green,
+          routeInDrawer: true,
+        ),
+      ];
 
-List<FlavorRouteWidget> get routesForDrawer {
-  List<FlavorRouteWidget> arr = [];
-  for (var i = 0; i < dashRoutes.length; i++) {
-    FlavorRouteWidget ii = dashRoutes[i];
-    if (ii.routeInDrawer == true) {
-      arr.add(ii);
+  List<FlavorRouteWidget> get routesForDrawer {
+    List<FlavorRouteWidget> arr = [];
+    for (var i = 0; i < dashRoutes.length; i++) {
+      FlavorRouteWidget ii = dashRoutes[i];
+      if (ii.routeInDrawer == true) {
+        arr.add(ii);
+      }
     }
-  }
 
-  return arr;
+    return arr;
+  }
 }

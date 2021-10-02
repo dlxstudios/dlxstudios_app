@@ -28,9 +28,10 @@ dependencies:
   algolia:
   just_audio:
   audio_session:
-  video_player:
   audio_service:
   audioplayers:
+  video_player: ^2.1.15
+
 
   flutter_svg:
 

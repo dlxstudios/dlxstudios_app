@@ -1,3 +1,6 @@
+import 'package:dlxstudios_app/controllers/auth_controller.dart';
+import 'package:dlxstudios_app/providers/providers.dart';
+import 'package:dlxstudios_app/screens/admin.dart';
 import 'package:dlxstudios_app/state/state.dart';
 import 'package:dlxstudios_app/theme/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,33 +22,49 @@ class _ScreenAccountState extends State<ScreenAccount> {
     return Consumer(builder: (context, watch, _) {
       var app = context.watch<DashAppState>();
 
+      var auth = watch(authControllerProvider);
+
+      print(auth);
+
       return GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
         child: Scaffold(
-            body: Stack(
-          fit: StackFit.expand,
-          children: [
-            app.user != null ? buildProfile(app) : ScreenLogin(),
-          ],
-        )),
+          body: Consumer(builder: (context, watch, child) {
+            var user = watch(authControllerProvider);
+            var firebaseFirestore = watch(firebaseFirestoreProvider);
+            var email = app.user!.email;
+            print('email::$email');
+            return FutureBuilder(
+                future: firebaseFirestore
+                    .doc('users/$email')
+                    .get()
+                    .then((value) => value.data()),
+                builder: (context, snapshot) {
+                  print('snapshot.hasData::${snapshot.data}');
+                  return snapshot.hasData
+                      ? buildProfile(snapshot.data, app)
+                      : ScreenLogin();
+                });
+          }),
+        ),
       );
     });
   }
 
-  Widget buildProfile(DashAppState app) {
+  Widget buildProfile(user, DashAppState app) {
     var displayName = TextEditingController(
-      text: app.user!.displayName ?? '',
+      text: user['displayName'] ?? '',
     );
 
     var emailTextEditingController = TextEditingController(
-      text: app.user!.email ?? '',
+      text: user['email'] ?? '',
     );
 
     // var phone = TextEditingController(
     //   text: app.user!.displayName ?? '',
     // );
 
-    String userDocPath = 'users/${app.user!.email}';
+    String userDocPath = 'users/${user['email']}';
 
     List<AccountTextFeild> _textFields = [
       AccountTextFeild(
@@ -69,49 +88,69 @@ class _ScreenAccountState extends State<ScreenAccount> {
             .set({'phone': dn}),
       ),
     ];
-    return SingleChildScrollView(
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 16, horizontal: 4),
-        child: Card(
-          child: Container(
-            padding: EdgeInsets.all(16),
-            // constraints: BoxConstraints(
-            //   minWidth: 320,
-            //   maxWidth: 600,
-            // ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                // Personal info
 
-                app.user != null
-                    ? ListView.separated(
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          if (index == 0) {
-                            return ProfileHeader(title: 'Personal Info');
-                          }
-                          return _textFields[index - 1];
-                        },
-                        separatorBuilder: (context, index) {
-                          return SizedBox(
-                            height: 16,
-                          );
-                        },
-                        itemCount: _textFields.length + 1,
-                      )
-                    : Container(),
-
-                SizedBox(
-                  height: 16,
-                ),
-
-                ElevatedButton.icon(
-                  icon: Icon(Icons.exit_to_app),
-                  label: Text('Logout'),
-                  onPressed: () => app.logoutUser(),
+    return Scaffold(
+      appBar: AppBar(
+        actions: [
+          (user as Map).containsKey('isAdmin')
+              ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton.icon(
+                    icon: Icon(Icons.exit_to_app),
+                    label: Text('Admin'),
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => const ScreenAdmin(),
+                      ),
+                    ),
+                  ),
                 )
-              ],
+              : Container(),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          margin: EdgeInsets.symmetric(vertical: 16, horizontal: 4),
+          child: Card(
+            child: Container(
+              padding: EdgeInsets.all(16),
+              // constraints: BoxConstraints(
+              //   minWidth: 320,
+              //   maxWidth: 600,
+              // ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  // Personal info
+                  user != null
+                      ? ListView.separated(
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            if (index == 0) {
+                              return ProfileHeader(title: 'Personal Info');
+                            }
+                            return _textFields[index - 1];
+                          },
+                          separatorBuilder: (context, index) {
+                            return SizedBox(
+                              height: 16,
+                            );
+                          },
+                          itemCount: _textFields.length + 1,
+                        )
+                      : Container(),
+
+                  SizedBox(
+                    height: 16,
+                  ),
+
+                  ElevatedButton.icon(
+                    icon: Icon(Icons.exit_to_app),
+                    label: Text('Logout'),
+                    onPressed: () => app.logoutUser(),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -184,6 +223,9 @@ class ScreenLogin extends StatelessWidget {
       return FlavorOnboardingV3(
         gApiKey: 'AIzaSyDaGm_f6SvznyHIQnPHk7s4V2UygStMb6g',
         isLoggedIn: app.user != null,
+        description: 'DLX Studios',
+        title: 'DLX Studios',
+        themeData: ThemeData.dark(),
         onEmailLogin: (email, password) {
           try {
             return FirebaseAuth.instance

@@ -17,8 +17,8 @@ class SideMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<DashAppState>(
       builder: (context, app, child) {
-        print(routesForDrawer);
-        var children = routesForDrawer
+        // print(app.routesForDrawer);
+        var children = app.routesForDrawer
             .asMap()
             .map((index, e) => MapEntry(
                 index,
@@ -153,7 +153,10 @@ class __LibraryPlaylistsState extends State<_LibraryPlaylists> {
                             style: Theme.of(context).textTheme.bodyText2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          onTap: () {},
+                          onTap: () {
+                            var app = context.read<DashAppState>();
+                            print(app.user);
+                          },
                         ))
                     .toList(),
               ],

@@ -10,7 +10,7 @@ final firebaseAuthProvider =
 final firebaseFirestoreProvider =
     Provider<FirebaseFirestore>((ref) => FirebaseFirestore.instance);
 
-hiveProviderInit(String path) => FutureProvider.autoDispose(
+hiveProviderInit(String path) async => FutureProvider.autoDispose(
       (ref) => Hive.initFlutter().then(
         (value) => Hive.openBox(path),
       ),
@@ -22,3 +22,9 @@ final miniPlayerControllerProvider =
     StateProvider.autoDispose<MiniplayerController>(
   (ref) => MiniplayerController(),
 );
+
+final hiveFutureProvider = FutureProvider<Box>((ref) {
+  return Hive.initFlutter().then(
+    (value) => Hive.openBox('dlxstudios.app'),
+  );
+});

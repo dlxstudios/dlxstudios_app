@@ -62,16 +62,19 @@ class _ScreenHomeState extends State<ScreenHome> {
   Widget build(BuildContext context) {
     print('args::${widget.args}');
     return Scaffold(
-      // appBar: buildMobileAppBar(context),
+      appBar: MediaQuery.of(context).size.width < 720
+          ? buildMobileAppBar(context)
+          : null,
       body: FutureBuilder(
           future: FlavorFirestoreRepository()
               .firestore
-              .collection('/media_published')
+              .collection('apps/XoYwXO5Yc2lgCn7YlGwp/post')
               .get()
               .then((value) => value.docs.map((e) => e.data()).toList()),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              var items = snapshot.data! as List;
+              List<Map<String, dynamic>> items =
+                  snapshot.data! as List<Map<String, dynamic>>;
               // print(items);
 
               return CustomScrollView(
@@ -126,11 +129,12 @@ class _ScreenHomeState extends State<ScreenHome> {
     );
   }
 
-  List<Widget> fakeList2(List items, {double aspectRatio = 1}) {
+  List<Widget> fakeList2(List<Map<String, dynamic>> items,
+      {double aspectRatio = 1}) {
     return List.generate(
       items.length,
       (index) {
-        print(items[index]);
+        // print(items[index]);
         return AspectRatio(
           aspectRatio: aspectRatio,
           child: FlavorCardTile(
@@ -139,7 +143,12 @@ class _ScreenHomeState extends State<ScreenHome> {
             // color: Theme.of(context).cardColor,
             footerTitle: '${items[index]['title']}',
             footerSubtitle: '${items[index]['title']}',
-            cardTileLayout: FlavorCardTileLayout.seperated,
+            // cardTileLayout: FlavorCardTileLayout.seperated,
+            backgroundImage: items[index].containsKey('coverUrl')
+                ? items[index]['coverUrl']
+                : items[index].containsKey('cover_url')
+                    ? items[index]['cover_url']
+                    : null,
             padding: EdgeInsets.all(4),
           ),
         );
