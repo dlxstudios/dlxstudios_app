@@ -42,24 +42,19 @@ dependencies:
   hive: ^2.0.4
   hive_flutter: ^1.1.0
   firebase_core: ^1.5.0
-    # path: C:/Users/dlxstudios/Desktop/Github/flutterfire/packages/firebase_core/firebase_core
   firebase_auth: ^3.1.0
 
   flavor_client:
-    path: C:/Users/dlxstudios/Desktop/Github/flavor/flavor_firebase/flavor_client
+    path: ../../flavor/flavor_firebase/flavor_client
   flavor_auth:
-    path: C:/Users/dlxstudios/Desktop/Github/flavor/flavor_auth
+    path: ../../flavor/flavor_auth
   flavor_http:
-    path:  C:/Users/dlxstudios/Desktop/Github/flavor/flavor_http
+    path:  ../../flavor/flavor_http
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   miniplayer: ^1.0.0+2
-  
-  flutter_hooks: ^0.17.0
-  hooks_riverpod: ^0.14.0+1
-
+  flutter_hooks: ^0.18.0
+  hooks_riverpod: ^1.0.0-dev.11
   freezed_annotation: ^0.14.1
 
 

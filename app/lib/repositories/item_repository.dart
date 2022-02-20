@@ -53,7 +53,7 @@ class ItemRepository implements BaseItemRepository {
       await _read(firebaseFirestoreProvider)
           .usersListRef(userId)
           .doc(item.localId)
-          .update(item.toJson());
+          .update(item.toMap());
     } on FirebaseException catch (e) {
       throw CustomException(message: e.message);
     }

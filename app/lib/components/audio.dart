@@ -114,7 +114,7 @@ class AudioPlayerTask extends BackgroundAudioTask with ChangeNotifier {
         MediaControl.skipToNext,
       ],
       systemActions: [
-        MediaAction.seekTo,
+        MediaAction.seek,
         MediaAction.seekForward,
         MediaAction.seekBackward,
       ],
@@ -131,9 +131,9 @@ class AudioPlayerTask extends BackgroundAudioTask with ChangeNotifier {
     if (_skipState != null) return _skipState;
     switch (_player.processingState) {
       case ProcessingState.idle:
-        return AudioProcessingState.stopped;
+        return AudioProcessingState.idle;
       case ProcessingState.loading:
-        return AudioProcessingState.connecting;
+        return AudioProcessingState.loading;
       case ProcessingState.buffering:
         return AudioProcessingState.buffering;
       case ProcessingState.ready:

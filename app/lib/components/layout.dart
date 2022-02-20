@@ -50,7 +50,8 @@ class _AppLayoutWidgetState extends State<DashAppLayoutWidget>
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, watch, _) {
-      final miniPlayerController = watch(miniPlayerControllerProvider).state;
+      final miniPlayerController =
+          watch.watch(miniPlayerControllerProvider).state;
 
       return Container(
         color: Theme.of(context).backgroundColor,

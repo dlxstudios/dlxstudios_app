@@ -22,7 +22,7 @@ class _ScreenAccountState extends State<ScreenAccount> {
     return Consumer(builder: (context, watch, _) {
       var app = context.watch<DashAppState>();
 
-      var auth = watch(authControllerProvider);
+      var auth = watch.watch(authControllerProvider);
 
       print(auth);
 
@@ -30,8 +30,8 @@ class _ScreenAccountState extends State<ScreenAccount> {
         onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
         child: Scaffold(
           body: Consumer(builder: (context, watch, child) {
-            var user = watch(authControllerProvider);
-            var firebaseFirestore = watch(firebaseFirestoreProvider);
+            var user = watch.watch(authControllerProvider);
+            var firebaseFirestore = watch.watch(firebaseFirestoreProvider);
             var email = app.user!.email;
             print('email::$email');
             return FutureBuilder(
@@ -221,7 +221,6 @@ class ScreenLogin extends StatelessWidget {
     return Consumer(builder: (context, watch, _) {
       var app = context.watch<DashAppState>();
       return FlavorOnboardingV3(
-        gApiKey: 'AIzaSyDaGm_f6SvznyHIQnPHk7s4V2UygStMb6g',
         isLoggedIn: app.user != null,
         description: 'DLX Studios',
         title: 'DLX Studios',
